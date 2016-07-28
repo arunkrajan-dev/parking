@@ -1,0 +1,321 @@
+{
+	"application": {
+		"title": "Parking - Admin Supprt App",
+
+		"theme": "bootswatch-paper",
+
+		"collections": [
+			{
+				"name": "parkings",
+				"fields": [
+					{ "name": "_id", "title": "Id", "required": true, "exportable": true },
+					{ "name": "name", "title": "Name", "required": true, "exportable": true },
+					{ "name": "device", "title": "Device", "required": true, "exportable": true },
+					{ "name": "status", "title": "Status", "required": true, "exportable": true },
+				],
+				"owner_field": "ownerId",
+				"roles_allowed_to_read": ["owner"],
+				"roles_allowed_to_update": ["owner"],
+				"roles_allowed_to_delete": ["owner"],
+			},
+			{
+				"name": "members",
+				"fields": [
+					{ "name": "_id", "title": "Associate Id", "required": true, "exportable": true },
+					{ "name": "name", "title": "Name", "required": true, "exportable": true },
+					{ "name": "rfid", "title": "RFID", "required": true, "exportable": true },
+					{ "name": "token", "title": "App Token", "required": true, "exportable": true },
+					{ "name": "mobile", "title": "Mobile", "required": true, "exportable": true },
+				],
+				"owner_field": "ownerId",
+				"roles_allowed_to_read": ["owner"],
+				"roles_allowed_to_update": ["owner"],
+				"roles_allowed_to_delete": ["owner"],
+			}
+		],
+
+		"queries": [
+			{
+				"name": "parking_list",
+				"collection": "parkings",
+				"filter": {},
+				"options": {
+					"sort": [[ "title", "desc"]]
+				}
+			},
+			{
+				"name": "parking_empty",
+				"collection": "parkings",
+				"filter": { "_id": null },
+				"options": {},
+				"find_one": true,
+				"related_queries": [
+					{ "name": "parking_list" }
+				]
+			},
+			{
+				"name": "parking_details",
+				"collection": "parkings",
+				"filter": { "_id": ":parkingId" },
+				"find_one": true
+			},
+			{
+				"name": "member_list",
+				"collection": "members",
+				"filter": {},
+				"options": {
+					"sort": [[ "title", "desc"]]
+				}
+			},
+			{
+				"name": "member_empty",
+				"collection": "members",
+				"filter": { "_id": null },
+				"options": {},
+				"find_one": true,
+				"related_queries": [
+					{ "name": "member_list" }
+				]
+			},
+			{
+				"name": "member_details",
+				"collection": "members",
+				"filter": { "_id": ":memberId" },
+				"find_one": true
+			},			
+			{
+				"name": "current_user_data",
+				"collection": "users",
+				"filter": { "_id": "Meteor.userId()" },
+				"find_one": true
+			}
+		],
+
+		"public_zone": {
+			"pages": [
+				{ 
+					"name": "home_public", 
+					"title": "", 
+					"components": [
+						{
+							"name": "home_jumbotron",
+							"title": "Parking Management - Admin Support page",
+							"type": "jumbotron",
+							"text": "Admin Support prototype application for parking management",
+							"button_title": "Continue &raquo;",
+							"button_route": "login"
+						}
+					]
+				},
+				{ "name": "login", "template": "login" },
+				{ "name": "register", "template": "register" },
+				{ "name": "forgot_password", "template": "forgot_password" },
+				{ "name": "reset_password", "template": "reset_password", "route_params": ["resetPasswordToken"] }
+			],
+
+			"components": [
+				{
+					"name": "left_menu",
+					"type": "menu",
+					"class": "nav navbar-nav",
+					"dest_selector": "#menu",
+					"items": [
+						{ "title": "Home", "route": "home_public" }
+					]
+				},
+
+				{
+					"name": "right_menu",
+					"type": "menu",
+					"class": "nav navbar-nav navbar-right",
+					"dest_selector": "#menu",
+					"items": [
+						{ "title": "Register", "route": "register" },
+						{ "title": "Login", "route": "login" }
+					]
+				}
+			]
+		},
+
+		"private_zone": {
+			"pages": [
+				{
+					"name": "parkings",
+					"components": [
+						{
+							"name": "view",
+							"type": "data_view",
+							"title": "parkings",
+							"text_if_empty": "No parkings :(",
+							"query_name": "parking_list",
+							"insert_route": "parkings.insert"
+						}
+					],
+
+					"pages": [
+						{
+							"name": "insert",
+							"components": [
+								{
+									"name": "insert_form",
+									"type": "form",
+									"mode": "insert",
+									"title": "New parking",
+
+									"query_name": "parking_empty",
+
+									"submit_route": "parkings.details",
+									"submit_route_params": [
+										{ "name": "parkingId", "value": "newId"}
+									],
+									"cancel_route": "parkings"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "members",
+					"components": [
+						{
+							"name": "view",
+							"type": "data_view",
+							"title": "members",
+							"text_if_empty": "No members :(",
+							"query_name": "member_list",
+							"insert_route": "members.insert",
+							"edit_route": "members.edit",
+							"edit_route_params": [
+								{ "name": "memberId", "value": "this._id" }
+							],
+							"details_route": "members.details",
+							"details_route_params": [
+								{ "name": "memberId", "value": "this._id" }
+							]
+						}
+					],
+
+					"pages": [
+						{
+							"name": "insert",
+							"components": [
+								{
+									"name": "insert_form",
+									"type": "form",
+									"mode": "insert",
+									"title": "New member",
+
+									"query_name": "member_empty",
+
+									"submit_route": "members.details",
+									"submit_route_params": [
+										{ "name": "memberId", "value": "newId"}
+									],
+									"cancel_route": "members"
+								}
+							]
+						},
+						{
+							"name": "details",
+							"template": "page_subcontent_tabnav",
+							"route_params": ["memberId"],
+							"components": [
+								{
+									"name": "details_form",
+									"type": "form",
+									"mode": "read_only",
+									"title": "member #{{member_details.title}}",
+									"layout": "horizontal",
+									"query_name": "member_details",
+									"back_route": "members"
+								}
+
+							]
+						},
+
+						{
+							"name": "edit",
+							"route_params": ["memberId"],
+							"components": [
+								{
+									"name": "edit_form",
+									"type": "form",
+									"mode": "update",
+									"title": "Edit member",
+									"submit_route": "members",
+									"cancel_route": "members",
+									"query_name": "member_details"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "user_settings",
+					"pages": [
+						{
+							"name": "profile",
+							"components": [
+								{
+									"name": "edit_form",
+									"type": "form",
+									"mode": "update",
+									"title": "Edit your profile",
+									"submit_route": "user_settings.profile",
+									"query_name": "current_user_data",
+									"fields": [
+										{ "name": "profile.name", "title": "Name", "required": true },
+										{ "name": "profile.email", "title": "E-mail", "type": "email", "required": true }
+									]
+								}
+							]
+						},
+
+						{ "name": "change_pass", "template": "change_pass" }
+					],
+
+					"components": [
+						{
+							"name": "side_menu",
+							"type": "menu",
+							"class": "nav nav-stacked nav-pills",
+							"items": [
+								{ "title": "Profile", "route": "user_settings.profile" },
+								{ "title": "Change password", "route": "user_settings.change_pass" }
+							]
+						}
+					]
+				},
+
+				{ "name": "logout", "template": "logout" }
+			],
+
+			"components": [
+				{
+					"name": "left_menu",
+					"type": "menu",
+					"class": "nav navbar-nav",
+					"dest_selector": "#menu",
+					"items": [
+						{ "title": "parkings", "route": "parkings" }
+					]
+				},
+				{
+					"name": "right_menu",
+					"type": "menu",
+					"class": "nav navbar-nav navbar-right",
+					"dest_selector": "#menu",
+					"items": [
+						{ 
+							"title": "{{userEmail}}",
+							"items": [
+								{ "title": "Settings", "route": "user_settings" },
+								{ "title": "Logout", "route": "logout" }
+							]
+						}
+					]
+				}
+			]
+		}
+	}
+}
