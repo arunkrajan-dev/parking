@@ -12,9 +12,9 @@
 
 <template name="ParkingsView">
 	<div id="parkings-view" class="">
-		<h2 id="component-title">
-			parkings
-		</h2>
+		<h3 id="component-title">
+			Parkings Live Status
+		</h3>
 		<form id="dataview-controls" class="form-inline">
 			<div id="dataview-controls-insert" class="form-group {{insertButtonClass}}">
 				<button type="submit" id="dataview-insert-button" class="btn btn-success">
@@ -108,6 +108,12 @@
 					Status
 				</th>
 				<th>
+					
+				</th>
+				<th>
+					Manual Overide
+				</th>
+				<th>
 					&nbsp;
 				</th>
 			</tr>
@@ -121,29 +127,32 @@
 <template name="ParkingsViewTableItems">
 	<tr id="dataview-table-items-row" class="{{statusColor status}}">
 		<td>
-			{{_id}}
+			<span style="font-size: 16px;">{{_id}}</span>
 		</td>
 		<td>
-			{{name}}
+			<span style="font-size: 16px;">{{name}}</span>
 		</td>
 		<td>
-			{{device}}
+			<span style="font-size: 16px;">{{device}}</span>
 		</td>
 		<td>
-			{{statusText status}}
+			<span style="font-size: 16px;">{{statusText status}}</span>
+		</td>
+		<td>
+			<i class="fa fa-car fa-3x {{statusColor status}}" aria-hidden="true"></i>
 		</td>
 		<td>
 			{{#if statusChk status "0"}}
-				<a href="#" class="assign-button btn btn-warning">Assign</a>
-				<a href="#" class="fill-button btn btn-danger">Fill</a>
+				<a href="#" class="assign-button btn btn-warning btn-xs">Assign</a>
+				<a href="#" class="fill-button btn btn-danger btn-xs">Block</a>
 			{{/if}}
 			{{#if statusChk status "1"}}
-				<a href="#" class="free-button btn btn-success">Free</a>
-				<a href="#" class="assign-button btn btn-warning">Assign</a>
+				<a href="#" class="free-button btn btn-success btn-xs">Free&nbsp;&nbsp;&nbsp;</a>
+				<a href="#" class="assign-button btn btn-warning btn-xs">Assign</a>
 			{{/if}}
 			{{#if statusChk status "2"}}
-				<a href="#" class="free-button btn btn-success">Free</a>
-				<a href="#" class="fill-button btn btn-danger">Fill</a>
+				<a href="#" class="free-button btn btn-success btn-xs">Free&nbsp;&nbsp;&nbsp;</a>
+				<a href="#" class="fill-button btn btn-danger btn-xs">Block&nbsp;&nbsp;</a>
 			{{/if}}			
 		</td>
 		<td class="td-icon">
